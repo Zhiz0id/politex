@@ -1,6 +1,4 @@
-# Ignore everything
-*
-
-# But not these files...
-!.gitignore
-!*.latex
+*.pdf
+*.aux
+*.log
+*.gz
