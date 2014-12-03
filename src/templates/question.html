@@ -2,7 +2,7 @@
 <div style="padding-left:10px" ng-repeat="option in qna[0].options">
     <div class="radio">
       <label>
-        <input type="radio" name="{{qna[0].tag}}" value="{{option.text}}" ng-model="qna[0].tag" ng-change="evalScore(qna[0].id, option.text)"/>    
+        <input type="radio" name="{{qna[0].tag}}" value="{{option.text}}" ng-model="qna[0].tag" ng-change="evalScore(qna[0].id, option.text, option)"/>
         <span style="{{option.style}}">{{option.text}}</span>
       </label>
     </div>
