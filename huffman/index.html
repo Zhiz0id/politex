@@ -1,0 +1,225 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="huffman.js"></script>
+<script type="text/javascript" src="tree.js"></script>
+<script type="text/javascript" src="tree_builder.js"></script>
+<script type="text/javascript" src="core_helpers.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML-full"></script>
+</head>
+<body>
+  <style type="text/css">
+    #mynetwork {
+      /*width: 80%;
+      height: 400px; */
+      border: 1px solid lightgray;
+    }
+    body {
+  padding-top: 5rem;
+}
+.starter-template {
+  padding: 3rem 1.5rem;
+/*  text-align: center;
+*/}
+pre {
+  text-align: left;
+}
+</style>
+
+
+<script type="text/javascript">
+var codes = [];
+$(window).ready(function() {
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+    $('#huffman').submit(function(event){
+        $('#solution').show();
+        event.preventDefault();
+        var text = $('#io').val().toLowerCase();
+        huffmanGenerateTree(text);
+    });
+});
+
+function huffmanGenerateTree(text) {
+  var huffman = Huffman.treeFromText(text);
+  var encoded = huffman.encode(text);
+  var codes = huffman.leafCache;
+  var frequencyTable = huffman.frequencyTable;
+  var frequency = frequencyTableUnpack(frequencyTable[0]);
+  renderCodesTable(codes, frequency);
+  console.log(huffman);
+  visualizeTree(huffman);
+}
+
+function frequencyTableUnpack(frequencyTable) {
+    var data = {};
+    if ( !$.isArray(frequencyTable[0]) && !$.isArray(frequencyTable[1])) {
+      data[frequencyTable[1]] = frequencyTable[0];
+    } else {
+      if ($.isArray(frequencyTable[0])) {
+        $.each(frequencyTableUnpack(frequencyTable[0]), function(key, value){
+          data[key] = value;
+        });
+      }
+
+      if ($.isArray(frequencyTable[1])) {
+        $.each(frequencyTableUnpack(frequencyTable[1]), function(key, value){
+          data[key] = value;
+        })
+      }
+    }
+    return data;
+}
+
+
+function renderCodesTable(codes, frequency) {
+    console.log(frequency);
+    var total = 0;
+    Object.values(frequency).forEach(function(num){total+=parseFloat(num) || 0;});;
+    var formula_n = [];
+    var formula_h = [];
+    var formula_n_result = 0;
+    var formula_h_result = 0;
+    $.each(codes, function(key, value) {
+        var markup = "<tr><td>" + key + "</td><td>" + frequency[key] + "/" + total + "</td><td>" + value + "</td></tr>";
+        $("#codes-table  > tbody:last-child").append($(markup));
+        formula_n.push(value.length + ' \\frac{' + frequency[key] + '}{' + total + '}');
+        formula_h.push('\\frac{' + frequency[key] + '}{' + total + '}log_2\\frac{' + frequency[key] + '}{' + total + '}');
+        formula_n_result += (value.length * frequency[key])/total;
+        formula_h_result += ((frequency[key]/total) * Math.log2(frequency[key]/total));
+    });
+    formula_h_result = formula_h_result * -1;
+    
+    $("#formula_n").text('$' + formula_n.join(' + ') + ' = ' + formula_n_result + ' \\approx ' + Math.round(formula_n_result) + '$');
+    $("#formula_h").text('$H(X) = -(' + formula_h.join(' + ') + ') = ' + formula_h_result + ' \\approx ' + Math.round(formula_h_result) + '$');
+    $("#formula_delta").text('$\\delta = \\frac{Н(х)}{ñ} = \\frac{' + formula_h_result + '}{' + formula_n_result + '} = ' + formula_h_result/formula_n_result + ' \\approx ' + Math.round(formula_h_result/formula_n_result) + '$'); 
+    var formula_n_el = document.getElementById("formula_n");
+    var formula_h_el = document.getElementById("formula_h");
+    var formula_delta_el = document.getElementById("formula_delta");
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_n_el]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_h_el]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_delta]);
+}
+
+function visualizeTree(tree) {
+  var data = walk(tree.root);
+  //console.log(data); 
+  // create an array with nodes
+  var nodes = new vis.DataSet(Object.keys(data[1]).map(x => ({id: x, label: data[1][x]['value']})));
+
+  // create an array with edges
+  var edges = new vis.DataSet(data[0]); 
+
+  // create a network
+  var container = document.getElementById('mynetwork');
+  var data = {
+    
+    nodes: nodes,
+    edges: edges
+  };
+  var options = {
+  layout: { 
+        hierarchical: {
+            enabled: true,
+            direction: 'RL',
+            sortMethod: 'directed',
+        },
+    },
+  };
+  var network = new vis.Network(container, data, options);
+};
+
+function walk(node, node_id, tree_edges, tree_nodes) {
+    if (node_id === undefined) {
+        var node_id = 0;
+    }
+    if (tree_edges === undefined) {
+        var tree_edges = [];
+    }
+    if (tree_nodes === undefined) {
+        var tree_nodes = {};
+    }
+    var parent_id = node_id;
+    tree_nodes[parent_id] = {value: node.value};
+    if (node.left != null && node.left !== undefined) {
+            //console.log('left', parent_id, node_id + 1, node);
+            node_id = node_id + 1;
+            tree_edges.push({from: parent_id, to: node_id, label: '0', arrows: 'to'})
+            var d = walk(node.left, node_id, tree_edges, tree_nodes);
+            tree_edges = d[0];
+            tree_nodes = d[1];
+            node_id = d[2];
+    }
+    if (node.right != null && node.right !== undefined) {
+            //console.log('right', parent_id, node_id + 1, node);
+            node_id = node_id + 1;
+            tree_edges.push({from: parent_id, to: node_id, label: '1', arrows: 'to'})
+            var d = walk(node.right, node_id, tree_edges, tree_nodes);
+            tree_edges = d[0];
+            tree_nodes = d[1];
+            node_id = d[2];
+    }
+    return [tree_edges, tree_nodes, node_id];
+}
+</script>
+    <main role="main" class="container">
+
+      <div class="starter-template">
+      <pre>
+Комплексная экзаменационная задача 2018 г. - Заочники
+
+1. И - |КОДЕР И |-|УЗО|-|к.к. УПС|-|Л.C.|-|Демод УПС|-|УЗО|-|Декод|- П
+   Формирование исходных собщений
+   Имя + Отчество + 2 последние буквы отчества кодируются по методу Д Хафмана
+   по ñ - округляется сообщение
+
+2. Скорость передачи данных - 100 сообщений в секунду. Определить ширину
+   спектра сигнала ??? ФМ - 180', Несущая частота fн = 100 кГц.
+
+3. Определить вероятность искажения символа Po если амплитуда сигнала a = 2,
+   sigma^2 = 1
+
+4. Определить вероятность приёма ошибочного сообщения без помехоустойчивого
+   кодирования
+
+5. Определить количество принятой получателем информации за 1 минуту.
+
+      </pre>
+      <h1>Решение:</h1>
+      <h2>1. Кодирование по Д. Хафману</h2>
+      <form id="huffman">
+        <div class="form-group">
+        <label for="exampleInput">ИмяОтчество и последние две буквы Отчества</label>
+        <input class="form-control" id="io" aria-describedby="ioHelp" placeholder="ИванИвановов">
+        <small id="ioHelp" class="form-text text-muted">Например ИванИвановов</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Закодировать</button>
+      </form>
+
+    <div id="solution" hidden>
+      <div id="mynetwork"></div>
+    
+      <table class="table" id="codes-table"><thead><tr><td>буква</td><td>вероятность</td><td>код</td></tr></thead><tbody></tbody></table>
+      <p>&ntilde; - среднее число символов на сообщение n</p>
+      <p>&ntilde; = <span id="formula_n"></span></p>
+      <p>Усреднение количества собственной информации по всем состояниям множества X даёт меру неопределённости всего множества состояний.
+        Эта мера обозначается символом H(X) и называется энтропией множества X
+      </p>
+      <p>$H(X) = - \sum_{i=1}^{N} P(x_i)log_2{P(x_i)}$
+      <p><span id="formula_h"></span></p>
+      <p>Для бинарных алфавитов (D=2) нижняя граница среднего числа символов определяется из условия $H(x) \leq n $, которое и выполняется.</p>
+      <p>Эффективность кода оценивается величиной отношения $\delta = \frac{Н(х)}{ñ}$.
+      <p><span id="formula_delta"></span></p>
+    </div>
+    </main>
+</body>
+</html>
