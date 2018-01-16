@@ -25,7 +25,7 @@ Huffman.TreeBuilder.prototype.buildFrequencyTable = function() {
     frequency = _d[chr];
     table.push([frequency, chr]);
   }
-  table.sort(this.frequencyAndAlphanumericSorter);
+  table.sort(this.frequencySorter);
   return table;
 };
 Huffman.TreeBuilder.prototype.frequencySorter = function(a, b) {
@@ -47,7 +47,7 @@ Huffman.TreeBuilder.prototype.combineTable = function(table) {
     second = table.shift();
     table.push([first[0] + second[0], [first, second]]);
     //table.sort(this.frequencySorter);
-    table.sort(this.frequencyAndAlphanumericSorter);
+    table.sort(this.frequencySorter);
   }
   return table[0];
 };
