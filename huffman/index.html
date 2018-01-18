@@ -107,6 +107,9 @@ function renderCodesTable(codes, frequency) {
     var delta_s = 1/tau;
     $("#formula_delta_s").text('$\\Delta S = [0 \\pm \\frac{1}{\\tau}] = [0 \\pm' + delta_s + '$ Гц.] = ' + delta_s * 2 + 'Гц.');
     $("#formula_f").text('f = (' + (100 - (delta_s / 1000)) + 'кГц, ' + (100 + (delta_s / 1000)) + 'кГц)');
+    var phi_1_41 = 0.95385;
+    var p_0 = 1/2 * (1- phi_1_41);
+    $("#formula_p_0").text(p_0);
     var formula_n_el = document.getElementById("formula_n");
     var formula_h_el = document.getElementById("formula_h");
     var formula_delta_el = document.getElementById("formula_delta");
@@ -235,6 +238,8 @@ function walk(node, node_id, tree_edges, tree_nodes) {
       <p><span id='formula_tau'></span></p>
       <p><span id='formula_delta_s'></span></p>
       <p><span id='formula_f'></span></p>
+      <h2>3. Определить вероятность искажения символа $P_0$ если амплитуда сигнала a = 2, $\sigma^2$ = 1</h2>
+      <p>$P_0 = \frac{1}{2}[1-\Phi(\frac{a}{\sqrt{2\sigma^2}})] = \frac{1}{2}[1-\Phi(\frac{2}{\sqrt{2}})] = \frac{1}{2}[1-\Phi(1.41)] = $<span id='formula_p_0'></span></p>
     </div>
     </main>
 </body>
