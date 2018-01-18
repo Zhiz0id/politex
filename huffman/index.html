@@ -102,12 +102,23 @@ function renderCodesTable(codes, frequency) {
     $("#formula_n").text('$' + formula_n.join(' + ') + ' = ' + formula_n_result + ' \\approx ' + Math.round(formula_n_result) + '$');
     $("#formula_h").text('$H(X) = -(' + formula_h.join(' + ') + ') = ' + formula_h_result + ' \\approx ' + Math.round(formula_h_result) + '$');
     $("#formula_delta").text('$\\delta = \\frac{Н(х)}{ñ} = \\frac{' + formula_h_result + '}{' + formula_n_result + '} = ' + formula_h_result/formula_n_result + ' \\approx ' + Math.round(formula_h_result/formula_n_result) + '$'); 
+    var tau = 1/(100 * Math.round(formula_n_result));
+    $("#formula_tau").text('$\\tau = \\frac{1}{100\\cdot ñ} = ' + tau + '$ сек.');
+    var delta_s = 1/tau;
+    $("#formula_delta_s").text('$\\Delta S = [0 \\pm \\frac{1}{\\tau}] = [0 \\pm' + delta_s + '$ Гц.] = ' + delta_s * 2 + 'Гц.');
+    $("#formula_f").text('f = (' + (100 - (delta_s / 1000)) + 'кГц, ' + (100 + (delta_s / 1000)) + 'кГц)');
     var formula_n_el = document.getElementById("formula_n");
     var formula_h_el = document.getElementById("formula_h");
     var formula_delta_el = document.getElementById("formula_delta");
+    var formula_tau_el = document.getElementById("formula_tau");
+    var formula_delta_s_el = document.getElementById("formula_delta_s");
+    var formula_f_el = document.getElementById("formula_f");
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_n_el]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_h_el]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_delta]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_tau]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_delta_s]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_f]);
 }
 
 function visualizeTree(tree) {
@@ -195,7 +206,6 @@ function walk(node, node_id, tree_edges, tree_nodes) {
 
       </pre>
       <h1>Решение:</h1>
-      <h2>1. Кодирование по Д. Хафману</h2>
       <form id="huffman">
         <div class="form-group">
         <label for="exampleInput">ИмяОтчество и последние две буквы Отчества</label>
@@ -206,6 +216,7 @@ function walk(node, node_id, tree_edges, tree_nodes) {
       </form>
 
     <div id="solution" hidden>
+      <h2>1. Кодирование по Д. Хафману</h2>
       <div id="mynetwork"></div>
     
       <table class="table" id="codes-table"><thead><tr><td>буква</td><td>вероятность</td><td>код</td></tr></thead><tbody></tbody></table>
@@ -219,6 +230,11 @@ function walk(node, node_id, tree_edges, tree_nodes) {
       <p>Для бинарных алфавитов (D=2) нижняя граница среднего числа символов определяется из условия $H(x) \leq n $, которое и выполняется.</p>
       <p>Эффективность кода оценивается величиной отношения $\delta = \frac{Н(х)}{ñ}$.
       <p><span id="formula_delta"></span></p>
+
+      <h2>2. Определение ширины спектра при скорости передачи данных 100 сообщений в секунду, ФМ - 180' и несущей частоте 100кГц</h2>
+      <p><span id='formula_tau'></span></p>
+      <p><span id='formula_delta_s'></span></p>
+      <p><span id='formula_f'></span></p>
     </div>
     </main>
 </body>
