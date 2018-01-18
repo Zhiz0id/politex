@@ -90,6 +90,7 @@ function renderCodesTable(codes, frequency) {
     var formula_n_result = 0;
     var formula_h_result = 0;
     var formula_n_total = 0;
+    $("#codes-table > tbody").html("");
     $.each(codes, function(key, value) {
         var markup = "<tr><td>" + key + "</td><td>" + frequency[key] + "/" + total + "</td><td>" + value + "</td></tr>";
         $("#codes-table  > tbody:last-child").append($(markup));
