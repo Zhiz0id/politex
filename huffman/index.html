@@ -97,7 +97,7 @@ function renderCodesTable(codes, frequency) {
         formula_h.push('\\frac{' + frequency[key] + '}{' + total + '}log_2\\frac{' + frequency[key] + '}{' + total + '}');
         formula_n_result += (value.length * frequency[key])/total;
         formula_h_result += ((frequency[key]/total) * Math.log2(frequency[key]/total));
-        formula_n_total += value.length;
+        formula_n_total += value.length * frequency[key];
     });
     formula_h_result = formula_h_result * -1;
     
