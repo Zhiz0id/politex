@@ -89,6 +89,7 @@ function renderCodesTable(codes, frequency) {
     var formula_h = [];
     var formula_n_result = 0;
     var formula_h_result = 0;
+    var formula_n_total = 0;
     $.each(codes, function(key, value) {
         var markup = "<tr><td>" + key + "</td><td>" + frequency[key] + "/" + total + "</td><td>" + value + "</td></tr>";
         $("#codes-table  > tbody:last-child").append($(markup));
@@ -96,6 +97,7 @@ function renderCodesTable(codes, frequency) {
         formula_h.push('\\frac{' + frequency[key] + '}{' + total + '}log_2\\frac{' + frequency[key] + '}{' + total + '}');
         formula_n_result += (value.length * frequency[key])/total;
         formula_h_result += ((frequency[key]/total) * Math.log2(frequency[key]/total));
+        formula_n_total += value.length;
     });
     formula_h_result = formula_h_result * -1;
     
@@ -110,18 +112,25 @@ function renderCodesTable(codes, frequency) {
     var phi_1_41 = 0.95385;
     var p_0 = 1/2 * (1- phi_1_41);
     $("#formula_p_0").text(p_0);
+    $("#formula_n_total").text('n = ' + formula_n_total);
+    $("#formula_p_0_all").text('$1 - P_{0}(' + formula_n_total + ') = 1 - (P_{0} \\cdot n) = 1 - ' + p_0 + ' \\cdot ' + formula_n_total + ' = ' + (1 - (p_0 * formula_n_total)) + '$');
+    $("#formula_p_0_one").text('$1 - P_{0}(' + Math.round(formula_n_result) + ') = 1 - (P_{0} \\cdot n) = 1 - ' + p_0 + ' \\cdot ' + Math.round(formula_n_result) + ' = ' + (1 - (p_0 * Math.round(formula_n_result))) + '$');
     var formula_n_el = document.getElementById("formula_n");
     var formula_h_el = document.getElementById("formula_h");
     var formula_delta_el = document.getElementById("formula_delta");
     var formula_tau_el = document.getElementById("formula_tau");
     var formula_delta_s_el = document.getElementById("formula_delta_s");
     var formula_f_el = document.getElementById("formula_f");
+    var formula_p_0_all_el = document.getElementById("formula_p_0_all");
+    var formula_p_0_one_el = document.getElementById("formula_p_0_one");
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_n_el]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_h_el]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_delta]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_tau]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_delta_s]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_f]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_p_0_all]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_p_0_one]);
 }
 
 function visualizeTree(tree) {
@@ -240,6 +249,15 @@ function walk(node, node_id, tree_edges, tree_nodes) {
       <p><span id='formula_f'></span></p>
       <h2>3. Определить вероятность искажения символа $P_0$ если амплитуда сигнала a = 2, $\sigma^2$ = 1</h2>
       <p>$P_0 = \frac{1}{2}[1-\Phi(\frac{a}{\sqrt{2\sigma^2}})] = \frac{1}{2}[1-\Phi(\frac{2}{\sqrt{2}})] = \frac{1}{2}[1-\Phi(1.41)] = $<span id='formula_p_0'></span></p>
+      <p>$\Phi$ - интеграл вероятности (табличное значение).</p>
+      <p>a = 2 (из условия).</p>
+      <p>$\sigma^2$ = 1 (из условия).</p>
+      <h2>4. Определить вероятность приёма ошибочного сообщения без помехоустойчивого кодирования.</h2>
+      <p>Вероятность появления взаимно независимых ошибок определяется по формуле $P_{v}(n) = C_{n}^{v}P_{0}^{v}(1-P_0)^{n-v}$</p>
+      <p>Вероятность ошибки $1 - P_{0}(n)$</p>
+      <p>Длина всего сообщения <span id="formula_n_total"></p>
+      <p>Вероятность ошибки во всём сообщении: <span id='formula_p_0_all'></span></p>
+      <p>Вероятность ошибки в одной кодовой комбинации: <span id='formula_p_0_one'></span></p>
     </div>
     </main>
 </body>
