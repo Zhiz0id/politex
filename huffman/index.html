@@ -113,8 +113,8 @@ function renderCodesTable(codes, frequency) {
     var p_0 = 1/2 * (1- phi_1_41);
     $("#formula_p_0").text(p_0);
     $("#formula_n_total").text('n = ' + formula_n_total);
-    $("#formula_p_0_all").text('$(1 - P_{0})^{' + formula_n_total + '} = (1 - P_{0})^n = (1 - ' + p_0 + ')^{' + formula_n_total + '} = ' + Math.pow(1 - p_0, formula_n_total) + '$');
-    $("#formula_p_0_one").text('$(1 - P_{0})^{' + Math.round(formula_n_result) + '} = (1 - P_{0})^n = (1 - ' + p_0 + ')^{' + Math.round(formula_n_result) + '} = ' + Math.pow(1 - p_0, Math.round(formula_n_result)) + '$');
+    $("#formula_p_0_all").text('$1 - (1 - P_{0})^n = 1 - (1 - ' + p_0 + ')^{' + formula_n_total + '} = ' + (1 - Math.pow(1 - p_0, formula_n_total)) + '$');
+    $("#formula_p_0_one").text('$1 - (1 - P_{0})^n = 1 - (1 - ' + p_0 + ')^{' + Math.round(formula_n_result) + '} = ' + (1 - Math.pow(1 - p_0, Math.round(formula_n_result))) + '$');
     var formula_n_el = document.getElementById("formula_n");
     var formula_h_el = document.getElementById("formula_h");
     var formula_delta_el = document.getElementById("formula_delta");
