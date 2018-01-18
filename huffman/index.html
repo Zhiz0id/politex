@@ -123,6 +123,21 @@ function renderCodesTable(codes, frequency) {
     var formula_f_el = document.getElementById("formula_f");
     var formula_p_0_all_el = document.getElementById("formula_p_0_all");
     var formula_p_0_one_el = document.getElementById("formula_p_0_one");
+    var formula_h_x_y = document.getElementById("formula_h_x_y");
+    var formula_i_x_y = document.getElementById("formula_i_x_y");
+    var formula_i_last = document.getElementById("formula_i_last");
+    $("#formula_p_0_one").text('$1 - (1 - P_{0})^n = 1 - (1 - ' + p_0 + ')^{' + Math.round(formula_n_result) + '} = ' + (1 - Math.pow(1 - p_0, Math.round(formula_n_result))) + '$');
+    var formula_h_x_y_result = (-1 * p_0) * Math.log2(p_0) - ((1-p_0) * Math.log2(1-p_0));
+    $("#formula_h_x_y").text('$H(X/Y) = -P \\cdot log_{2}P - (1-P)log_{2}(1-P) =  -' + p_0 + ' \\cdot log_{2}' + p_0 + ' - ' + (1-p_0) + ' \\cdot log_{2}' + (1-p_0) + ' \\approx ' + formula_h_x_y_result + '$');
+    var formula_i_x_y_result = 1 - formula_h_x_y_result;
+    $("#formula_i_x_y").text('$I(X;Y) = 1 - ' + formula_h_x_y_result + ' = ' + formula_i_x_y_result + '$');
+    var n_per_second = 100 * Math.round(formula_n_result);
+    var n_per_minute = n_per_second * 60;
+    var i_last = formula_i_x_y_result * n_per_minute;
+    $("#n_per_second").text('ñ * 100 кк/сек = ' + Math.round(formula_n_result) + ' * 100 кк/сек = ' + n_per_second);
+    $("#n_per_minute").text('ñ * 100 кк/сек * 60 = ' + n_per_minute);
+    $("#formula_i_last").text('$I = ' + Math.round(formula_i_x_y_result * n_per_minute) + '$');
+
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_n_el]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_h_el]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_delta]);
@@ -131,6 +146,9 @@ function renderCodesTable(codes, frequency) {
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_f]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_p_0_all]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_p_0_one]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_h_x_y]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_i_x_y]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_i_last]);
 }
 
 function visualizeTree(tree) {
@@ -206,7 +224,7 @@ function walk(node, node_id, tree_edges, tree_nodes) {
    по ñ - округляется сообщение
 
 2. Скорость передачи данных - 100 сообщений в секунду. Определить ширину
-   спектра сигнала ??? ФМ - 180', Несущая частота fн = 100 кГц.
+   спектра сигнала с ФМ - 180', Несущая частота fн = 100 кГц.
 
 3. Определить вероятность искажения символа Po если амплитуда сигнала a = 2,
    sigma^2 = 1
@@ -253,11 +271,26 @@ function walk(node, node_id, tree_edges, tree_nodes) {
       <p>a = 2 (из условия).</p>
       <p>$\sigma^2$ = 1 (из условия).</p>
       <h2>4. Определить вероятность приёма ошибочного сообщения без помехоустойчивого кодирования.</h2>
-      <p>Вероятность появления взаимно независимых ошибок определяется по формуле $P_{v}(n) = C_{n}^{v}P_{0}^{v}(1-P_0)^{n-v}$</p>
+      <p>Вероятность появления взаимно независимых ошибок определяется по формуле $P_{\nu}(n) = C_{n}^{\nu}P_{0}^{\nu}(1-P_0)^{n-\nu}$</p>
       <p>Вероятность ошибки $1 - P_{0}(n)$</p>
       <p>Длина всего сообщения <span id="formula_n_total"></p>
       <p>Вероятность ошибки во всём сообщении: <span id='formula_p_0_all'></span></p>
       <p>Вероятность ошибки в одной кодовой комбинации: <span id='formula_p_0_one'></span></p>
+      <p>Считаем принимая $\nu$ равным 0, т.е. ищем вероятность получения сообщения без ошибки и вычитаем из 1, чтобы получить вероятность ошибочного сообщения.</p>
+      <h2>5. Определить количество принятой получателем информации за 1 минуту.</h2>
+      <h4>5.1 Посчитаем количество информации на один символ</h6>
+      <p>$I(X;Y) = H(X) - H(X/Y)$</p>
+      <p>Считаем для двоичной передачи, два состояния (0 и 1).</p>
+      <p>$H(X) = \sum_{i=1}^{2}P(x_i) \cdot I(x_i) = - \sum_{i=1}^{2}P(x_i)log_{2}P(x_i)=1$</p>
+      <p><span id="formula_h_x_y"></span></p>
+      <p>P - вероятность искажения</p>
+      <p><span id="formula_i_x_y"></span></p>
+      <h4>5.2 Считаем количество символов за минуту.</h4>
+      <p>Дана скорость 100 кк/сек.</p>
+      <p>Количество символов в секунду: <span id='n_per_second'></span></p>
+      <p>Количество символов за минуту: <span id='n_per_minute'></span></p>
+      <h4>5.3 Считаем количество информации за минуту.</h4>
+      <p><span id='formula_i_last'></span> бит</p>
     </div>
     </main>
 </body>
