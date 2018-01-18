@@ -136,7 +136,7 @@ function renderCodesTable(codes, frequency) {
     var i_last = formula_i_x_y_result * n_per_minute;
     $("#n_per_second").text('ñ * 100 кк/сек = ' + Math.round(formula_n_result) + ' * 100 кк/сек = ' + n_per_second);
     $("#n_per_minute").text('ñ * 100 кк/сек * 60 = ' + n_per_minute);
-    $("#formula_i_last").text('$I = ' + Math.round(formula_i_x_y_result * n_per_minute) + '$');
+    $("#formula_i_last").text('$I = ' + formula_i_x_y_result + ' * ' + Math.round(n_per_minute) + ' = ' + Math.round(formula_i_x_y_result * n_per_minute) + '$');
 
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_n_el]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_h_el]);
