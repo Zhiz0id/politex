@@ -110,7 +110,7 @@ function renderCodesTable(codes, frequency) {
     var delta_s = 1/tau;
     $("#formula_delta_s").text('$\\Delta S = [0 \\pm \\frac{1}{\\tau}] = [0 \\pm' + delta_s + '$ Гц.] = ' + delta_s * 2 + 'Гц.');
     $("#formula_f").text('f = (' + (100 - (delta_s / 1000)) + 'кГц, ' + (100 + (delta_s / 1000)) + 'кГц)');
-    var phi_1_41 = 1/2 * (1 + 0.42073);
+    var phi_1_41 = 1/2 * (1 + 0.84270);
     var p_0 = 1/2 * (1- phi_1_41);
     $("#formula_p_0").text('$P_0 = \\frac{1}{2}[1-\\Phi(x)] = \\frac{1}{2}[1-' + phi_1_41 +'] = ' + p_0 + '$');
     $("#formula_n_total").text('n = ' + formula_n_total);
