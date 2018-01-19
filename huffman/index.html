@@ -110,9 +110,9 @@ function renderCodesTable(codes, frequency) {
     var delta_s = 1/tau;
     $("#formula_delta_s").text('$\\Delta S = [0 \\pm \\frac{1}{\\tau}] = [0 \\pm' + delta_s + '$ Гц.] = ' + delta_s * 2 + 'Гц.');
     $("#formula_f").text('f = (' + (100 - (delta_s / 1000)) + 'кГц, ' + (100 + (delta_s / 1000)) + 'кГц)');
-    var phi_1_41 = 0.1591;//0.95385;
+    var phi_1_41 = 1/2 * (1 + 0.42073);
     var p_0 = 1/2 * (1- phi_1_41);
-    $("#formula_p_0").text(p_0);
+    $("#formula_p_0").text('$P_0 = \\frac{1}{2}[1-\\Phi(x)] = \\frac{1}{2}[1-\\Phi(' + phi_1_41 +')] = ' + p_0 + '$');
     $("#formula_n_total").text('n = ' + formula_n_total);
     $("#formula_p_0_all").text('$1 - (1 - P_{0})^n = 1 - (1 - ' + p_0 + ')^{' + formula_n_total + '} = ' + (1 - Math.pow(1 - p_0, formula_n_total)) + '$');
     $("#formula_p_0_one").text('$1 - (1 - P_{0})^n = 1 - (1 - ' + p_0 + ')^{' + Math.round(formula_n_result) + '} = ' + (1 - Math.pow(1 - p_0, Math.round(formula_n_result))) + '$');
@@ -124,6 +124,7 @@ function renderCodesTable(codes, frequency) {
     var formula_f_el = document.getElementById("formula_f");
     var formula_p_0_all_el = document.getElementById("formula_p_0_all");
     var formula_p_0_one_el = document.getElementById("formula_p_0_one");
+    var formula_p_0_el = document.getElementById("formula_p_0");
     var formula_h_x_y = document.getElementById("formula_h_x_y");
     var formula_i_x_y = document.getElementById("formula_i_x_y");
     var formula_i_last = document.getElementById("formula_i_last");
@@ -141,6 +142,7 @@ function renderCodesTable(codes, frequency) {
 
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_n_el]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_h_el]);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_p_0_el]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_delta]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_tau]);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,formula_delta_s]);
@@ -267,8 +269,9 @@ function walk(node, node_id, tree_edges, tree_nodes) {
       <p><span id='formula_delta_s'></span></p>
       <p><span id='formula_f'></span></p>
       <h2>3. Определить вероятность искажения символа $P_0$ если амплитуда сигнала a = 2, $\sigma^2$ = 1</h2>
-      <p>$P_0 = \frac{1}{2}[1-\Phi(\frac{a}{\sqrt{2\sigma^2}})] = \frac{1}{2}[1-\Phi(\frac{2}{\sqrt{2}})] = \frac{1}{2}[1-\Phi(1.41)] = $<span id='formula_p_0'></span></p>
-      <p>$\Phi$ - интеграл вероятности (табличное значение).</p>
+      <p><span id='formula_p_0'></span></p>
+      <p>$\Phi(x) = \frac{1}{2} ( 1 + erf(\frac{x}{\sqrt{2}}))$ - интеграл вероятности (табличное значение)</p>
+      <p>$x = \frac{a}{\sqrt{2\sigma^2}}$
       <p>a = 2 (из условия).</p>
       <p>$\sigma^2$ = 1 (из условия).</p>
       <h2>4. Определить вероятность приёма ошибочного сообщения без помехоустойчивого кодирования.</h2>
